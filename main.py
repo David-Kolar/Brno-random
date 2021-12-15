@@ -1,5 +1,6 @@
 import random
 
+from copy import deepcopy
 from file import input_file
 from algoritms import make_graph
 from random import randint
@@ -38,6 +39,8 @@ def random_path(graph, visited):
     path = []
     length = 0
     while(cont):
+        neighbours = deepcopy(graph[node])
+        del neighbours[node]
         neighbours = list(graph[node].keys())
         new = []
         for key, neighbour in enumerate(neighbours):
@@ -52,9 +55,12 @@ def random_path(graph, visited):
         node = random_node_list(new)
     return length, path
 
-visited = {}
 graph, n = input_file()
 graph = make_graph(graph)
 record = 0
-l, path = random_path(graph, visited)
-print(l, path)
+for i in range(1000):
+    visited = {}
+    l, path = random_path(graph, visited)
+    if (record < l):
+        record = l
+print(record, path)
