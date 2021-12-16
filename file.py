@@ -30,6 +30,7 @@ def input_with_cordinates(name="input"):
         return graph, n_streets, cordinates
 
 def output(longest, path, file="output.txt"):
+    longest = str(longest)
     with open(file, "w") as file:
         file.write(longest + "\n")
         for line in path:
