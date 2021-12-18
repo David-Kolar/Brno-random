@@ -54,7 +54,7 @@ def random_node_list(keys):
 
 def random_node_list(keys):
     if (keys):
-        limit = 600
+        limit = 900
         if (len(keys) > 2*limit + 1):
             if (random.randint(0, 1)%2==0):
                 n = random.randint(0, limit - 1)
@@ -92,7 +92,7 @@ graph = make_graph(graph)
 visited = {}
 node = random_node(graph)
 l, old_path = random_path(node, graph, visited)
-for i in range(10000):
+for i in range(1000):
     path = deepcopy(old_path)
     key, node = random_node_list(path)
     start = path[:key+1]
@@ -101,16 +101,14 @@ for i in range(10000):
         path = start
     else:
         path = end
-    path = start
     to_end = (len(start) >= len(end))
-    to_end = False
     visited = mark_as_visited(path)
     length, new_path = random_path(node, graph, visited)
-    if (len(new_path) + len(path) > len(old_path)):
-        if not(to_end):
+    if (len(new_path) + len(path) - 2 > len(old_path)):
+        if (to_end):
             path = path[0:-1] + new_path
         else:
-            path = new_path[len(new_path)-1:1:-1] + path
+            path = new_path[len(new_path)-1:0:-1] + path
         old_path = path
 s = summation(old_path, graph)
 output(s, old_path)
