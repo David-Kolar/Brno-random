@@ -4,7 +4,7 @@ from copy import deepcopy
 from file import input_file
 from algoritms import make_graph
 from random import randint
-from file import output
+from file import output, load_path
 from test import summation, set_neighbours_as_visited, was_visited, check_path
 from merge import path_to_dict, check_if_in_path, find_intersections, merge_two_paths
 
@@ -147,8 +147,8 @@ def record():
 
 graph, n = input_file()
 graph = make_graph(graph)
-s, path = find_random_long_path(graph, 6000)
-for i in range(1000000):
+path = load_path()
+for i in range(100000000):
     s, path2 = find_random_long_path(graph, 10)
     path = merge_two_paths(path, path2, graph)
     if(i%10000==0):

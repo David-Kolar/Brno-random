@@ -12,6 +12,14 @@ def input_file(name="input"):
                 graph.append(l)
         return graph, n_streets
 
+def load_path():
+    with open("output.txt") as file:
+        first = True
+        path = []
+        for line in file:
+            if (first): first = False
+            else: path.append(line[0:-1])
+    return path
 def input_with_cordinates(name="input"):
     with open(name) as file:
         n_crosses = None
