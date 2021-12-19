@@ -10,6 +10,11 @@ def all_visited(visited):
     for key, val in visited.items():
         if (val): new.append(key)
     return new
+
+def set_neighbours_as_visited(node, graph, visited):
+    for key in graph[node].keys():
+        visited[key] = True
+
 def was_visited(node, visited):
     try:
         visited[node]
@@ -26,11 +31,8 @@ def check_neighbours(node, ls, visited, ancestor):
 
 def check_path(path, graph):
     visited = {}
-    ancestor = path[0]
     for node in path:
-        if not(check_neighbours(node, graph[node], visited, ancestor)):
+        if (was_visited(node, visited)):
             return node
-        visited[ancestor] = True
-        ancestor = node
-
+        set_neighbours_as_visited(node, graph, visited)
     return True

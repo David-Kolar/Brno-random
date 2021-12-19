@@ -5,8 +5,8 @@ from file import input_file
 from algoritms import make_graph
 from random import randint
 from file import output
-from test import summation, check_neighbours, check_path, all_visited, was_visited
-
+from test import summation, set_neighbours_as_visited, was_visited
+from merge import path_to_dict, check_if_in_path, find_intersections
 
 
 def neighbours_in_path(key, path):
@@ -24,10 +24,6 @@ def mark_as_visited(path, graph):
     for key, val in enumerate(path):
         set_neighbours_as_visited(val, graph, visited)
     return visited
-
-def set_neighbours_as_visited(node, graph, visited):
-    for key in graph[node].keys():
-        visited[key] = True
 
 def random_node(graph):
     keys = list(graph.keys())
@@ -104,13 +100,11 @@ def find_random_long_path_len():
     s = summation(old_path, graph)
     return s, old_path
 
-def find_random_long_path():
-    graph, n = input_file()
-    graph = make_graph(graph)
+def find_random_long_path(graph, n=6000):
     visited = {}
     node = random_node(graph)
     l, old_path = random_path(node, graph, visited)
-    for i in range(3000):
+    for i in range(n):
         path = deepcopy(old_path)
         key, node = random_node_list(path)
         start = path[:key+1]
@@ -132,6 +126,13 @@ def find_random_long_path():
     s = summation(old_path, graph)
     return s, old_path
 
+def make_n_random_paths(graph, n):
+    paths = []
+    for i in range(n):
+        s, path = find_random_long_path(graph, 60)
+        paths.append(path)
+    return paths
+
 def record():
     record = 0
     record_path = []
@@ -143,6 +144,11 @@ def record():
             print(record)
             output(record, record_path)
         print(i)
+
+graph, n = input_file()
+graph = make_graph(graph)
+paths = make_n_random_paths(graph, 200)
+print(len(paths))
 """
 print(key)
 
