@@ -1,10 +1,13 @@
 def summation(path, graph):
     length = 0
+    if not(path):
+        return 0
     ancestor = path[0]
     for node in path:
         length += graph[ancestor][node]
         ancestor = node
     return length
+
 def all_visited(visited):
     new = []
     for key, val in visited.items():
@@ -31,8 +34,11 @@ def check_neighbours(node, ls, visited, ancestor):
 
 def check_path(path, graph):
     visited = {}
+    ancestor = None
     for node in path:
         if (was_visited(node, visited)):
             return node
-        set_neighbours_as_visited(node, graph, visited)
+        if (ancestor):
+            set_neighbours_as_visited(ancestor, graph, visited)
+        ancestor = node
     return True

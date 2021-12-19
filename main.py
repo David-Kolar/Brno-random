@@ -5,8 +5,8 @@ from file import input_file
 from algoritms import make_graph
 from random import randint
 from file import output
-from test import summation, set_neighbours_as_visited, was_visited
-from merge import path_to_dict, check_if_in_path, find_intersections
+from test import summation, set_neighbours_as_visited, was_visited, check_path
+from merge import path_to_dict, check_if_in_path, find_intersections, merge_two_paths
 
 
 def neighbours_in_path(key, path):
@@ -147,8 +147,15 @@ def record():
 
 graph, n = input_file()
 graph = make_graph(graph)
-paths = make_n_random_paths(graph, 200)
-print(len(paths))
+s, path = find_random_long_path(graph, 6000)
+for i in range(1000000):
+    s, path2 = find_random_long_path(graph, 10)
+    path = merge_two_paths(path, path2, graph)
+    if(i%10000==0):
+        s = summation(path, graph)
+        print(s)
+        output(s, path)
+print(check_path(path, graph))
 """
 print(key)
 
