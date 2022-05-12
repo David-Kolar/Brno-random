@@ -1,167 +1,48 @@
-import random
+import tkinter as tk
 
-from copy import deepcopy
-from file import input_file
-from algoritms import make_graph
-from random import randint
-from file import output, load_path
-from test import summation, set_neighbours_as_visited, was_visited, check_path
-from merge import path_to_dict, check_if_in_path, find_intersections, merge_two_paths
+class Game:
+    def __init__(self):
+        leva_palka = Palka(screen_width//6)
+        prava_palka = Palka(5*screen_width//6)
+        micek = Micek(100, 100)
+        self.time = 10
+    def play(self):
+        pass
+
+class HerniObjekt():
+    def __init__(self, x, y, height, width,  name="Pong"):
+        self.x_velocity = 10
+        self.y_velocity = 10
+        self.width = width
+        self.height = height
+        self.x = x
+        self.y = y
+        self.window = tk.Toplevel()
+        self.window.title(name)
+        self.window.geometry(f"{self.height}x{self.width}+{self.x}+{self.y}")
+    def move(self):
+        pass
+class Palka(HerniObjekt):
+    def __init__(self, x):
+        self.width = 400
+        self.height = 100
+        self.y = screen_width // 5
+        self.x = x
+        super().__init__(self.x, self.y, self.height, self.width,  "Palka")
+
+class Micek(HerniObjekt):
+    def __init__(self, x, y):
+        self.width = 10
+        self.height = 10
+        self.x = x
+        self.y = y
+        super().__init__(self.x, self.y, self.height, self.width,  "Micek")
 
 
-def neighbours_in_path(key, path):
-    neighbours = []
-    try:
-        neighbours.append(path[-(len(path)-key) - 1])
-    except: pass
-    try:
-        neighbours.append(path[key + 1])
-    except: pass
-    return neighbours
-
-def mark_as_visited(path, graph):
-    visited = {}
-    for key, val in enumerate(path):
-        set_neighbours_as_visited(val, graph, visited)
-    return visited
-
-def random_node(graph):
-    keys = list(graph.keys())
-    if (keys):
-        n = random.randint(0, len(keys) - 1)
-        return keys[n]
-    return False
-
-def random_node_list(keys):
-    if (keys):
-        n = random.randint(0, len(keys) - 1)
-        return n, keys[n]
-    return False, False
-
-def random_node_list(keys):
-    if (keys):
-        limit = 50
-        if (len(keys) > 2*limit + 1):
-            if (random.randint(0, 1)%2==0):
-                n = random.randint(0, limit - 1)
-            else: n =  random.randint(len(keys) - limit, len(keys)-1)
-        else:
-            n = random.randint(0, len(keys) - 1)
-        return n, keys[n]
-    return False, False
-
-def random_path(node, graph, visited):
-    cont = True
-    ancestor = node
-    path = []
-    length = 0
-    while(cont):
-        neighbours = deepcopy(graph[node])
-        del neighbours[node]
-        neighbours = list(neighbours.keys())
-        new = []
-        for neighbour in neighbours:
-            if not(was_visited(neighbour, visited)):
-                new.append(neighbour)
-        if not(new):
-            cont = False
-        length += graph[node][ancestor]
-        path.append(node)
-        set_neighbours_as_visited(node, graph, visited)
-        ancestor = node
-        key, node = random_node_list(new)
-    return length, path
-
-def find_random_long_path_len():
-    graph, n = input_file()
-    graph = make_graph(graph)
-    visited = {}
-    node = random_node(graph)
-    l, old_path = random_path(node, graph, visited)
-    for i in range(6000):
-        path = deepcopy(old_path)
-        key, node = random_node_list(path)
-        start = path[:key+1]
-        end = path[key::]
-        if (len(start) >= len(end)):
-            path = start
-            visited = mark_as_visited(start[:-1], graph)
-        else:
-            path = end
-            visited = mark_as_visited(end[1:], graph)
-        to_end = (len(start) >= len(end))
-        length, new_path = random_path(node, graph, visited)
-        if (len(new_path) + len(path) - 2 > len(old_path)):
-            if (to_end):
-                path = path[0:-1] + new_path
-            else:
-                path = new_path[len(new_path)-1:0:-1] + path
-            old_path = path
-    s = summation(old_path, graph)
-    return s, old_path
-
-def find_random_long_path(graph, n=6000):
-    visited = {}
-    node = random_node(graph)
-    l, old_path = random_path(node, graph, visited)
-    for i in range(n):
-        path = deepcopy(old_path)
-        key, node = random_node_list(path)
-        start = path[:key+1]
-        end = path[key::]
-        if (summation(start, graph) >= summation(end, graph)):
-            path = start
-            visited = mark_as_visited(start[:-1], graph)
-        else:
-            path = end
-            visited = mark_as_visited(end[1:], graph)
-        to_end = (summation(start, graph) >= summation(end, graph))
-        length, new_path = random_path(node, graph, visited)
-        if (summation(new_path, graph) + summation(path, graph) - 2 > summation(old_path, graph)):
-            if (to_end):
-                path = path[0:-1] + new_path
-            else:
-                path = new_path[len(new_path)-1:0:-1] + path
-            old_path = path
-    s = summation(old_path, graph)
-    return s, old_path
-
-def make_n_random_paths(graph, n):
-    paths = []
-    for i in range(n):
-        s, path = find_random_long_path(graph, 60)
-        paths.append(path)
-    return paths
-
-def record():
-    record = 0
-    record_path = []
-    for i in range(100):
-        s, path = find_random_long_path()
-        if (s > record):
-            record = s
-            record_path = path
-            print(record)
-            output(record, record_path)
-        print(i)
-
-graph, n = input_file()
-graph = make_graph(graph)
-path = load_path()
-for i in range(100000000):
-    s, path2 = find_random_long_path(graph, 10)
-    path = merge_two_paths(path, path2, graph)
-    if(i%10000==0):
-        s = summation(path, graph)
-        print(s)
-        output(s, path)
-print(check_path(path, graph))
-"""
-print(key)
-
-key, node = random_node_list(path)
-print(key, node)
-black_list = neighbours_in_path(key, path).append(node)
-print(black_list)
-l2, path2 = build_path(node, graph, visited)
-"""
+root = tk.Tk()
+root.title("Pong")
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+button = tk.Button(root, text="Start Game", command=Game)
+button.pack()
+root.mainloop()
